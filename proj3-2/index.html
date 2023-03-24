@@ -1,7 +1,200 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Project 3-2  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
+    <h2 align="middle">Mitchell Ding and Jen Nguyen</h2>
+    <h2 align="middle">(Webpage URL)</h2>
+
+    <div class="padded">
+
+        
+        * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
+
+		<h3 align="middle">Overview</h3>
+		<p>
+		In this project, we chose to work on part 2 microfacet material and part 4 depth of fields.
+		We first implemented the microfacet material model so that we can render different metallic finishes to objects. We did this by calculating the normal distribution function and the Fresnel term. We can then change the alpha number as well as the eta and k value of our object to create shinier metals and a variety of metals.
+		For depth of field, we changed up how camera rays are generated: instead of a straight ray going through the pinhole, we sample on a thin-lens and generate camera rays based on the focal distance. This gives the rendered images a sense of depth of field, and we can change the depth of field by changing the focal distance and aperture.
+		</p>
+
+        <h3 align="middle">Part 2. Microfacet Material</h3>
+        <p><b>
+            Show a screenshot sequence of 4 images of scene `CBdragon_microfacet_au.dae` rendered with $\alpha$ set to 0.005, 0.05, 0.25 and 0.5. The other settings should be at least 128 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Describe the differences between different images. Note that, to change the $\alpha$, just open the .dae file and search for `microfacet`.
+        </b></p>
+        <p>
+            All builds were done with 256 pixels per sample, 7 light bounces, and 4 samples per light. 
+			<br>
+			When we increase the alpha value, the object will appear less glossy and more matte. When we decrease the alpha value, the object can look more shiny and similar to a polished metal. 
+        </p>
+		<!-- The Images -->
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="./images/dragon0.005.png" align="middle" width="400px"/>
+				  <figcaption>Dragon alpha = 0.005</figcaption>
+				</td>
+				<td>
+				  <img src="./images/dragon0.05.png" align="middle" width="400px"/>
+				  <figcaption>Dragon alpha = 0.05</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				<td>
+				  <img src="./images/dragon0.25.png" align="middle" width="400px"/>
+				  <figcaption>Dragon alpha = 0.25</figcaption>
+				</td>
+				<td>
+				  <img src="./images/dragon0.5.png" align="middle" width="400px"/>
+				  <figcaption>Dragon alpha = 0.5</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+        <br>
+        <p><b>
+            Show two images of scene `CBbunny_microfacet_cu.dae` rendered using cosine hemisphere sampling (default) and your importance sampling. The sampling rate should be fixed at 64 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Briefly discuss their difference.
+        </b></p>
+        <p>
+            On the right, cosine hemisphere sampling produces a very grainy and noisy image. Cosine hemisphere sampling evenly samples rays over a hemipshere which makes it good for sampling diffuse materials but for microfacet material, we can see it produces a noisy image instead. Importance sampling samples pixels that have a significant effect on the image and therefore will produce a less noisy image than cosine hemisphere sampling. 
+        </p>
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="./images/bunny64.png" align="middle" width="400px"/>
+				  <figcaption>Importance Sampling</figcaption>
+				</td>
+				<td>
+				  <img src="./images/cosbunny64.png" align="middle" width="400px"/>
+				  <figcaption>Cosine Hemisphere Sampling</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+        <br>
+        <p><b>
+            Show at least one image with some other conductor material, replacing `eta` and `k`. Note that you should look up values for real data rather than modifying them arbitrarily. Tell us what kind of material your parameters correspond to. 
+        </b></p>
+        <p>
+            We deicded to try creating a dragon with mercury and titanium as the conductor material.
+        </p>
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="./images/mercurydragon.png" align="middle" width="400px"/>
+				  <figcaption>Mercury Dragon</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				<td>
+				  <img src="./images/titaniumdragon.png" align="middle" width="400px"/>
+				  <figcaption>Titanium Dragon</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+        <br>
+
+
+
+        <h3 align="middle">Part 4. Depth of Field</h3>
+        <b>
+            For these subparts, we recommend using a microfacet BSDF scene to show off the cool out of focus effects you can get with depth of field!
+        </b>
+        <p><b>
+            In a few sentences, explain the differences between a pinhole camera model and a thin-lens camera model. 
+        </b></p>
+        <p>
+            For a pinhole camera model, there's only one camera ray that can reach from the camera sensor to the image plane: a straight line through the pinhole. For a thin-lens camera, there are camera rays going through the entire disk of the camera lens, and rays' directions form trigonometric relations as demonstrated in the diagram below. Thus, by changing the radius of the disk and the focal length, we can create a sense of depth of fields, focusing on different areas on the image.
+        </p>
+        <br>
+        <p><b>
+            Show a "focus stack" where you focus at 4 visibly different depths through a scene. Make sure to include all screenshots.
+        </b></p>
+		<p>
+			Here is a focus stack where the aperture is set as 0.23, and the focal distance varies: 4.5, 4.75, 5.0, 5.5. We can see that clearly the focus point changes in each picture, and it gets farther away as focal distance increases, while areas unfocused are rather blurry.
+		</p>
+        <p>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./images/b23f45.png" align="middle" width="400px"/>
+						<figcaption>Dragon focal distance = 4.5</figcaption>
+					</td>
+					<td>
+						<img src="./images/b23f475.png" align="middle" width="400px"/>
+						<figcaption>Dragon focal distance = 4.75</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./images/b23f5.png" align="middle" width="400px"/>
+						<figcaption>Dragon focal distance = 5.0</figcaption>
+					</td>
+					<td>
+						<img src="./images/b23f55.png" align="middle" width="400px"/>
+						<figcaption>Dragon focal distance = 5.5</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+        </p>
+        <br>
+        <p><b>
+            Show a sequence of 4 pictures with visibly different aperture sizes, all focused at the same point in a scene. Make sure to include all screenshots.
+        </b></p>
+        <p>
+		<p>
+			In the following images, the focal distance is set as 4.75, and we varied the aperture: 0.01, 0.11, 0.23, 0.5. When aperture is 0, this is just regular image without a depth of field. As aperture increases, we see that there are blurry parts, i.e., unfocused parts, and the clearer, focused area becomes smaller.
+		</p>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./images/b01f475.png" align="middle" width="400px"/>
+						<figcaption>Dragon aperture = 0.01</figcaption>
+					</td>
+					<td>
+						<img src="./images/b11f475.png" align="middle" width="400px"/>
+						<figcaption>Dragon aperture = 0.11</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./images/b23f475.png" align="middle" width="400px"/>
+						<figcaption>Dragon aperture = 0.23</figcaption>
+					</td>
+					<td>
+						<img src="./images/b5f475.png" align="middle" width="400px"/>
+						<figcaption>Dragon aperture = 0.5</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+        </p>
+        <br>
+
+		<h3 align="middle">Collaboration</h3>
+		<p>
+			Jen Nguyen implemented part 2 microfacet, and Mitchell Ding implemented part 4 depth of field. We thought this project was relatively easy, and easy to divide up the work. We did not run into any major problems. We learned that the parts in the project are mainly additional features for the basic pathtracer implemented in project 3-1. We will look into other parts of this project when we are more free, so we can render more interesting image.
+		</p>
+    </div>
+</body>
 </html>
