@@ -1,7 +1,269 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 4 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">Project 4: Cloth Simulator</h1>
+<h2 align="middle">Jen Nguyen and Mitchell Ding</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>In this project we simulated the movement of cloth using a system of point masses and springs. We first set up the cloth using the point masses and gridding algorithm. We then added springs and applied forces to each point mass. Afterwards, we handled collision cases in order to simulate movement for the cloth (onto itself and onto other surfaces). Lastly, we created some shaders to make the cloth appear a certain texture or appearence. 
+<br><br>
+Overall, we were able to learn a lot about how to code the physical attributes of the cloth using vectors and physics. We also played around with the settings and parameters of the cloth to see the differences in movement and appearence. 
+</p>
+
+<h2 align="middle">Part I: Masses and springs</h2>
+<p>Below are screenshots of our grid from a viewing angle where you can see the wireframe and structure of the point masses and springs. 
+<br><br>
+<td>
+  <img src="./images/p1plain.png" align="middle" width="600px"/>
+</td>
+<br><br>
+<br><br>
+<td>
+  <img src="./images/p1plain2.png" align="middle" width="600px"/>
+</td>
+<br><br>
+Here is the wireframe without any shearing constraints: 
+<br><br>
+<td>
+  <img src="./images/p1noshear.png" align="middle" width="600px"/>
+</td>
+<br><br>
+Only Shearing constraints: 
+<br><br>
+<td>
+  <img src="./images/p1onlyshear.png" align="middle" width="600px"/>
+</td>
+<br><br>
+And with all the constraints: 
+<br><br>
+<td>
+  <img src="./images/p1norm.png" align="middle" width="600px"/>
+</td>
+<br><br>
+</p>
+
+
+  <h2 align="middle">Part II: Simulation via Numerical Integration</h2>
+  <p>
+    In this section, we simulated the movement of the cloth by summarizing the forces for each point mass and using verlet integration for movement.
+  </p>
+  Here are some screenshots with varying ks. Higher ks constant stronger spring forces and thus higher ks cause less stretching on the cloth.
+  <br><br>
+  Low ks:
+  <td>
+    <img src="./images/pinlowks.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  High ks:
+  <td>
+    <img src="./images/pinhighks.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  <br><br>
+  Here are some screenshots with varying density. Higher density means heavies mass, which means more stretching.
+  <br><br>
+  Low density:
+  <td>
+    <img src="./images/pinlowden.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  High density:
+  <td>
+    <img src="./images/pinhighden.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  <br><br>
+  Here are some screenshots with varying damping. Higher damping means slower cloth movement. In the resting stage, higher damping results in slightly bigger stretching.
+  <br><br>
+  Low damping:
+  <td>
+    <img src="./images/pinlowdamp.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  High damping:
+  <td>
+    <img src="./images/pinhighdamp.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  <br><br>
+  Here is a screenshot for shaded pinned cloth.
+  <br><br>
+  <td>
+    <img src="./images/p2rest.png" align="middle" width="600px"/>
+  </td>
+
+
+  <h2 align="middle">Part III: Handling Collisions with Other 0bjects</h2>
+  Here are some screenshots with vary ks. Higher ks constant stronger spring forces and thus higher ks cause less stretching and bending on the cloth.
+  <br><br>
+  ks = 500:
+  <td>
+    <img src="./images/2ks500.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  ks = 5000:
+  <td>
+    <img src="./images/2ks5000.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  ks = 50000:
+  <td>
+    <img src="./images/2ks50000.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  Here's an example of the cloth lying peacefully on the plane.
+  <br><br>
+  <td>
+    <img src="./images/plane.png" align="middle" width="600px"/>
+  </td>
+
+  <h2 align="middle">Part IV: Handling Self-collisions</h2>
+  <p>
+    In this section, we handled self-collision by adjusting the colliding point masses.
+  </p>
+  <p>
+    Here are some screenshots of how the cloth falls and folds.
+  </p>
+
+
+  <br><br>
+  Beginning:
+  <td>
+    <img src="./images/fold1.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  Middle:
+  <td>
+    <img src="./images/fold2.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  End:
+  <td>
+    <img src="./images/fold3.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  <p>
+    Here are some screenshots with varying density and ks. Higher density means the cloth falls faster because it's heavies. Lower ks means the cloth is harder to bend and thus falls faster and also has more wrinkles at its resting stage.
+  </p>
+  High density:
+  <td>
+    <img src="./images/fold_high_density1.png" width="400px"/>
+    <img src="./images/fold_high_density2.png" width="400px"/>
+  </td>
+  <br><br>
+  Small ks:
+  <td>
+    <img src="./images/fold_ks_small.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  <h2 align="middle">Part IV: Cloth Sim</h2>
+  <p>
+    A shader program determines how a 3D object is rendered on screen. The vertex shader performs transformation on the object's geometry, and fragment does lighting calculations, applies material properties and textures to determin the final color on the pixel/fragment.
+  </p>
+  <p>
+    Blinn-Phong shading combines ambient, diffuse, and specular lighting components to create realistic lighting, which are calculated based on the surface normals of the object and the light source.
+  </p>
+  <br><br>
+  Ambient only:
+  <td>
+    <img src="./images/ambient.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  Diffuse only:
+  <td>
+    <img src="./images/diffuse.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  Specular only:
+  <td>
+    <img src="./images/specular.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  Combined:
+  <td>
+    <img src="./images/phongall.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+
+  <p>
+    Here are some screenshots for bump and displacement with texture 3. Bump applings the texture colors to the surface smoothly. With displacement, more feel from the texture is applied, i.e., the brick texture causes the cloth to be less smooth and a little more crooked.
+  </p>
+  Bump:
+  <td>
+    <img src="./images/bump.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  Displacement:
+  <td>
+    <img src="./images/displacement.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+  <p>
+    Here are some screenshots for the mirror shader applied to the cloth and with the sphere.
+  </p>
+  Cloth:
+  <td>
+    <img src="./images/mirrorcloth.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  <td>
+    <img src="./images/mirrorcloth2.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  Sphere:
+  <td>
+    <img src="./images/mirrorball.png" align="middle" width="600px"/>
+  </td>
+  <br><br>
+  </p>
+</body>
 </html>
